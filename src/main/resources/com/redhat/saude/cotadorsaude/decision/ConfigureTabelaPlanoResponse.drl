@@ -1,0 +1,29 @@
+package com.redhat.saude.cotadorsaude.decision;
+
+import com.redhat.saude.cotadorsaude.TabelaPlanos;
+import com.redhat.saude.cotadorsaude.FaixaEtaria;
+import com.redhat.saude.cotadorsaude.responses.TabelaPrecoResponse;
+
+
+rule "Prepare TabelaPrecoResponse"
+    // the last rule to run
+    salience -100
+    no-loop true
+	dialect "mvel"
+	when
+		$tabela : TabelaPlanos()
+	then
+		TabelaPrecoResponse $response = $tabela.configureResponse();
+		insert($response);
+end
+
+rule "Prepare ListarPremiosPorPlanoResponse"
+    // the last rule to run
+    salience -100
+    no-loop true
+    dialect "mvel"
+    when
+        $response : ListarPremiosPorPlanoResponse()
+    then
+        $response.configurePremios();
+end

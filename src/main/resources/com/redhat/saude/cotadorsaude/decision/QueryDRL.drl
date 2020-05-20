@@ -1,0 +1,22 @@
+package com.redhat.saude.cotadorsaude.decision;
+
+import com.redhat.saude.cotadorsaude.TabelaPlanos;
+import com.redhat.saude.cotadorsaude.ListarPremiosPorPlanoResponse;
+import com.redhat.saude.cotadorsaude.responses.TabelaPrecoResponse;
+import com.redhat.saude.cotadorsaude.Plano;
+import com.redhat.saude.cotadorsaude.Premio;
+import com.redhat.saude.cotadorsaude.FaixaEtaria;
+import com.redhat.saude.cotadorsaude.Adesao;
+
+query "getTabelaPlanos"
+    tabelaPlano: TabelaPlanos()
+end
+
+query "getPremioPorPlano"
+    premioPlano: ListarPremiosPorPlanoResponse()
+end
+
+query "getTabelaPrecoResponse"
+    tabelaPrecoRespone: TabelaPrecoResponse()
+end
+

@@ -1,0 +1,46 @@
+package com.redhat.saude.cotadorsaude.decision;
+
+import java.lang.Number;
+import com.redhat.saude.cotadorsaude.TabelaPlanos;
+import com.redhat.saude.cotadorsaude.CalcularPremioRequest;
+import com.redhat.saude.cotadorsaude.CalcularPremioResponse;
+import com.redhat.saude.cotadorsaude.Adesao;
+import com.redhat.saude.cotadorsaude.Premio;
+import java.util.ArrayList;
+
+rule "CalcularPremioDRL"
+	dialect "mvel"
+	no-loop true
+	when
+		request : CalcularPremioRequest(adesoes!= null )
+	then
+	    
+		for (Adesao adesao:request.getAdesoes()) {
+		    TabelaPlanos tabela = new TabelaPlanos();
+		    tabela.setRegiao(request.getRegiao());
+		    tabela.setProduto(request.getProduto());
+		    tabela.setFaixaInicial(adesao.faixaEtaria.inicio);
+		    tabela.setFaixaFinal(adesao.faixaEtaria.fim);
+		    
+		    insertLogical(tabela);
+		    update(tabela);
+		}
+end
+
+rule "GetResultPremioDRL"
+    dialect "java"
+    when
+	    request : CalcularPremioRequest(adesoes!= null )
+	    tabela : TabelaPlanos(regiao == request.regiao , produto == request.produto, referencia != null  )
+	    response : CalcularPremioResponse()
+	then
+	    Integer plano = Integer.valueOf(request.getPlano());
+	    
+	    Double valor = tabela.retornarValorPlano(plano);
+	    
+	    Adesao adesao = request.retornarAdesaoPorFaixaEtaria(tabela.getFaixaInicial(), tabela.getFaixaFinal());
+	    
+	    response.getPremios().add(new Premio(adesao.getFaixaEtaria(), adesao.getQtdVidas() * valor));
+	    
+end
+
